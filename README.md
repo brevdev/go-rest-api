@@ -223,10 +223,11 @@ command,
 
 ## Todo
 
-- [] External auth support (Auth0)
+- [] External authentication support (Auth0)
+- [] Authorization
 - [] seed data
 - [] offset-free paging
-- [] prefix ids + validation
+- [x] prefix ids/unique ids + validation
 - [] change log
 - [] [Openapi support](https://github.com/getkin/kin-openapi)
 - [] [Improved CI/CD](https://github.com/brevdev/seed)

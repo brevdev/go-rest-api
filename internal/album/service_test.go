@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"testing"
+
 	"github.com/qiangxue/go-rest-api/internal/entity"
 	"github.com/qiangxue/go-rest-api/pkg/log"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 var errCRUD = errors.New("error crud")
@@ -128,7 +129,7 @@ type mockRepository struct {
 	items []entity.Album
 }
 
-func (m mockRepository) Get(ctx context.Context, id string) (entity.Album, error) {
+func (m mockRepository) Get(ctx context.Context, id entity.AlbumID) (entity.Album, error) {
 	for _, item := range m.items {
 		if item.ID == id {
 			return item, nil
@@ -166,7 +167,7 @@ func (m *mockRepository) Update(ctx context.Context, album entity.Album) error {
 	return nil
 }
 
-func (m *mockRepository) Delete(ctx context.Context, id string) error {
+func (m *mockRepository) Delete(ctx context.Context, id entity.AlbumID) error {
 	for i, item := range m.items {
 		if item.ID == id {
 			m.items[i] = m.items[len(m.items)-1]

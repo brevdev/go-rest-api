@@ -2,20 +2,21 @@ package album
 
 import (
 	"context"
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/qiangxue/go-rest-api/internal/entity"
 	"github.com/qiangxue/go-rest-api/pkg/log"
-	"time"
 )
 
 // Service encapsulates usecase logic for albums.
 type Service interface {
-	Get(ctx context.Context, id string) (Album, error)
+	Get(ctx context.Context, id entity.AlbumID) (Album, error)
 	Query(ctx context.Context, offset, limit int) ([]Album, error)
 	Count(ctx context.Context) (int, error)
 	Create(ctx context.Context, input CreateAlbumRequest) (Album, error)
-	Update(ctx context.Context, id string, input UpdateAlbumRequest) (Album, error)
-	Delete(ctx context.Context, id string) (Album, error)
+	Update(ctx context.Context, id entity.AlbumID, input UpdateAlbumRequest) (Album, error)
+	Delete(ctx context.Context, id entity.AlbumID) (Album, error)
 }
 
 // Album represents the data about an album.
@@ -58,7 +59,7 @@ func NewService(repo Repository, logger log.Logger) Service {
 }
 
 // Get returns the album with the specified the album ID.
-func (s service) Get(ctx context.Context, id string) (Album, error) {
+func (s service) Get(ctx context.Context, id entity.AlbumID) (Album, error) {
 	album, err := s.repo.Get(ctx, id)
 	if err != nil {
 		return Album{}, err
@@ -68,10 +69,7 @@ func (s service) Get(ctx context.Context, id string) (Album, error) {
 
 // Create creates a new album.
 func (s service) Create(ctx context.Context, req CreateAlbumRequest) (Album, error) {
-	if err := req.Validate(); err != nil {
-		return Album{}, err
-	}
-	id := entity.GenerateID()
+	id := entity.GenerateAlbumID()
 	now := time.Now()
 	err := s.repo.Create(ctx, entity.Album{
 		ID:        id,
@@ -86,7 +84,7 @@ func (s service) Create(ctx context.Context, req CreateAlbumRequest) (Album, err
 }
 
 // Update updates the album with the specified ID.
-func (s service) Update(ctx context.Context, id string, req UpdateAlbumRequest) (Album, error) {
+func (s service) Update(ctx context.Context, id entity.AlbumID, req UpdateAlbumRequest) (Album, error) {
 	if err := req.Validate(); err != nil {
 		return Album{}, err
 	}
@@ -105,7 +103,7 @@ func (s service) Update(ctx context.Context, id string, req UpdateAlbumRequest) 
 }
 
 // Delete deletes the album with the specified ID.
-func (s service) Delete(ctx context.Context, id string) (Album, error) {
+func (s service) Delete(ctx context.Context, id entity.AlbumID) (Album, error) {
 	album, err := s.Get(ctx, id)
 	if err != nil {
 		return Album{}, err

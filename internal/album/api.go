@@ -1,11 +1,13 @@
 package album
 
 import (
-	"github.com/go-ozzo/ozzo-routing/v2"
+	"net/http"
+
+	routing "github.com/go-ozzo/ozzo-routing/v2"
+	"github.com/qiangxue/go-rest-api/internal/entity"
 	"github.com/qiangxue/go-rest-api/internal/errors"
 	"github.com/qiangxue/go-rest-api/pkg/log"
 	"github.com/qiangxue/go-rest-api/pkg/pagination"
-	"net/http"
 )
 
 // RegisterHandlers sets up the routing of the HTTP handlers.
@@ -29,7 +31,12 @@ type resource struct {
 }
 
 func (r resource) get(c *routing.Context) error {
-	album, err := r.service.Get(c.Request.Context(), c.Param("id"))
+	id, err := entity.ValidateAlbumID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	album, err := r.service.Get(c.Request.Context(), id)
 	if err != nil {
 		return err
 	}
@@ -58,6 +65,9 @@ func (r resource) create(c *routing.Context) error {
 		r.logger.With(c.Request.Context()).Info(err)
 		return errors.BadRequest("")
 	}
+	if err := input.Validate(); err != nil {
+		return err
+	}
 	album, err := r.service.Create(c.Request.Context(), input)
 	if err != nil {
 		return err
@@ -73,7 +83,12 @@ func (r resource) update(c *routing.Context) error {
 		return errors.BadRequest("")
 	}
 
-	album, err := r.service.Update(c.Request.Context(), c.Param("id"), input)
+	id, err := entity.ValidateAlbumID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	album, err := r.service.Update(c.Request.Context(), id, input)
 	if err != nil {
 		return err
 	}
@@ -82,7 +97,12 @@ func (r resource) update(c *routing.Context) error {
 }
 
 func (r resource) delete(c *routing.Context) error {
-	album, err := r.service.Delete(c.Request.Context(), c.Param("id"))
+	id, err := entity.ValidateAlbumID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	album, err := r.service.Delete(c.Request.Context(), id)
 	if err != nil {
 		return err
 	}

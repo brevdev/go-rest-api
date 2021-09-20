@@ -2,6 +2,7 @@ package album
 
 import (
 	"context"
+
 	"github.com/qiangxue/go-rest-api/internal/entity"
 	"github.com/qiangxue/go-rest-api/pkg/dbcontext"
 	"github.com/qiangxue/go-rest-api/pkg/log"
@@ -10,7 +11,7 @@ import (
 // Repository encapsulates the logic to access albums from the data source.
 type Repository interface {
 	// Get returns the album with the specified album ID.
-	Get(ctx context.Context, id string) (entity.Album, error)
+	Get(ctx context.Context, id entity.AlbumID) (entity.Album, error)
 	// Count returns the number of albums.
 	Count(ctx context.Context) (int, error)
 	// Query returns the list of albums with the given offset and limit.
@@ -20,7 +21,7 @@ type Repository interface {
 	// Update updates the album with given ID in the storage.
 	Update(ctx context.Context, album entity.Album) error
 	// Delete removes the album with given ID from the storage.
-	Delete(ctx context.Context, id string) error
+	Delete(ctx context.Context, id entity.AlbumID) error
 }
 
 // repository persists albums in database
@@ -35,7 +36,7 @@ func NewRepository(db *dbcontext.DB, logger log.Logger) Repository {
 }
 
 // Get reads the album with the specified ID from the database.
-func (r repository) Get(ctx context.Context, id string) (entity.Album, error) {
+func (r repository) Get(ctx context.Context, id entity.AlbumID) (entity.Album, error) {
 	var album entity.Album
 	err := r.db.With(ctx).Select().Model(id, &album)
 	return album, err
@@ -53,7 +54,7 @@ func (r repository) Update(ctx context.Context, album entity.Album) error {
 }
 
 // Delete deletes an album with the specified ID from the database.
-func (r repository) Delete(ctx context.Context, id string) error {
+func (r repository) Delete(ctx context.Context, id entity.AlbumID) error {
 	album, err := r.Get(ctx, id)
 	if err != nil {
 		return err
