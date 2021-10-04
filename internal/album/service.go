@@ -60,6 +60,10 @@ func NewService(repo Repository, logger log.Logger) Service {
 
 // Get returns the album with the specified the album ID.
 func (s service) Get(ctx context.Context, id entity.AlbumID) (Album, error) {
+	if err := id.Validate(); err != nil {
+		return Album{}, err
+	}
+
 	album, err := s.repo.Get(ctx, id)
 	if err != nil {
 		return Album{}, err
@@ -69,6 +73,10 @@ func (s service) Get(ctx context.Context, id entity.AlbumID) (Album, error) {
 
 // Create creates a new album.
 func (s service) Create(ctx context.Context, req CreateAlbumRequest) (Album, error) {
+	if err := req.Validate(); err != nil {
+		return Album{}, err
+	}
+
 	id := entity.GenerateAlbumID()
 	now := time.Now()
 	err := s.repo.Create(ctx, entity.Album{
@@ -85,6 +93,9 @@ func (s service) Create(ctx context.Context, req CreateAlbumRequest) (Album, err
 
 // Update updates the album with the specified ID.
 func (s service) Update(ctx context.Context, id entity.AlbumID, req UpdateAlbumRequest) (Album, error) {
+	if err := id.Validate(); err != nil {
+		return Album{}, err
+	}
 	if err := req.Validate(); err != nil {
 		return Album{}, err
 	}
@@ -104,6 +115,10 @@ func (s service) Update(ctx context.Context, id entity.AlbumID, req UpdateAlbumR
 
 // Delete deletes the album with the specified ID.
 func (s service) Delete(ctx context.Context, id entity.AlbumID) (Album, error) {
+	if err := id.Validate(); err != nil {
+		return Album{}, err
+	}
+
 	album, err := s.Get(ctx, id)
 	if err != nil {
 		return Album{}, err

@@ -2,19 +2,20 @@ package entity
 
 import (
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 type AlbumID EntityID
 
-func GenerateAlbumID() AlbumID {
-	return AlbumID(GenerateID("album"))
+const albumPrefix string = "album"
+
+func (a AlbumID) Validate() error {
+	return validation.Validate(string(a), ValidateIDRule(albumPrefix))
 }
 
-func ValidateAlbumID(id string) (AlbumID, error) {
-	if err := ValidateID("user", EntityID(id)); err != nil {
-		return "", err
-	}
-	return AlbumID(id), nil
+func GenerateAlbumID() AlbumID {
+	return AlbumID(GenerateID(albumPrefix))
 }
 
 // Album represents an album record.

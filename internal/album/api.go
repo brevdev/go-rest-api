@@ -31,12 +31,7 @@ type resource struct {
 }
 
 func (r resource) get(c *routing.Context) error {
-	id, err := entity.ValidateAlbumID(c.Param("id"))
-	if err != nil {
-		return err
-	}
-
-	album, err := r.service.Get(c.Request.Context(), id)
+	album, err := r.service.Get(c.Request.Context(), entity.AlbumID(c.Param("id")))
 	if err != nil {
 		return err
 	}
@@ -65,9 +60,6 @@ func (r resource) create(c *routing.Context) error {
 		r.logger.With(c.Request.Context()).Info(err)
 		return errors.BadRequest("")
 	}
-	if err := input.Validate(); err != nil {
-		return err
-	}
 	album, err := r.service.Create(c.Request.Context(), input)
 	if err != nil {
 		return err
@@ -83,12 +75,7 @@ func (r resource) update(c *routing.Context) error {
 		return errors.BadRequest("")
 	}
 
-	id, err := entity.ValidateAlbumID(c.Param("id"))
-	if err != nil {
-		return err
-	}
-
-	album, err := r.service.Update(c.Request.Context(), id, input)
+	album, err := r.service.Update(c.Request.Context(), entity.AlbumID(c.Param("id")), input)
 	if err != nil {
 		return err
 	}
@@ -97,12 +84,7 @@ func (r resource) update(c *routing.Context) error {
 }
 
 func (r resource) delete(c *routing.Context) error {
-	id, err := entity.ValidateAlbumID(c.Param("id"))
-	if err != nil {
-		return err
-	}
-
-	album, err := r.service.Delete(c.Request.Context(), id)
+	album, err := r.service.Delete(c.Request.Context(), entity.AlbumID(c.Param("id")))
 	if err != nil {
 		return err
 	}

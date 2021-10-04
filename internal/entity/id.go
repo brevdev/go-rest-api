@@ -2,8 +2,9 @@ package entity
 
 import (
 	"fmt"
-	"strings"
+	"regexp"
 
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
 
@@ -14,9 +15,8 @@ func GenerateID(prefix string) EntityID {
 	return EntityID(fmt.Sprintf("%s-%s", prefix, uuid.New().String()))
 }
 
-func ValidateID(prefix string, id EntityID) error {
-	if !strings.HasPrefix(string(id), prefix) {
-		return fmt.Errorf("invalid %s id  - %s", prefix, id)
-	}
-	return nil
+func ValidateIDRule(prefix string) validation.Rule {
+	re := regexp.MustCompile(fmt.Sprintf(`%s_*`, prefix))
+	rule := validation.Match(re)
+	return rule.Error(fmt.Sprintf("invalid %s id", prefix))
 }
